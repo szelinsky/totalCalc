@@ -48,7 +48,7 @@ function App() {
         description: 'Zipcode not found.',
         status: 'error',
         duration: 3000,
-        position: 'bottom',
+        position: 'bottom'
         // containerStyle: {
         //   marginTop: '300px',
         //   background: 'green.500'
