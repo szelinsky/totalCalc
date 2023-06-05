@@ -3,7 +3,7 @@ import ListRouteItem from './ListRouteItem';
 const ListRoute = ({ userList, remove }) => (
   <>
     {userList &&
-      userList.map((item, index) => (
+      userList.reverse().map((item, index) => (
         <ListRouteItem
           key={item.id}
           city={item.city}

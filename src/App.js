@@ -11,7 +11,7 @@ function App() {
   const [routeList, setRouteList] = useState([]);
   const [isError, setIsError] = useState(false);
 
-  const toast  = useToast();
+  const toast = useToast();
   const bg = useColorModeValue('gray.50', 'gray.900');
 
   const findLocation = (inputZipcode) => {
@@ -22,13 +22,13 @@ function App() {
     if (foundLocation) {
       const foundZone = data.find((zone) => zone.zones.includes(foundLocation));
       setRouteList([
-        ...routeList,
         {
           id: Math.floor(Math.random() * 9000) + 1000,
           name: foundZone.name,
           price: foundZone.price,
           ...foundLocation
-        }
+        },
+        ...routeList
       ]);
 
       setInputValue('');
@@ -45,10 +45,14 @@ function App() {
     inputValue.length === 5 ? findLocation(inputValue) : setIsError(false);
     if (isError && inputValue.length === 5) {
       toast({
-        title: 'Zipcode not found.',
+        description: 'Zipcode not found.',
         status: 'error',
-        duration: 5000,
-        isClosable: true,
+        duration: 3000,
+        position: 'bottom',
+        // containerStyle: {
+        //   marginTop: '300px',
+        //   background: 'green.500'
+        // }
       });
     }
   }, [inputValue, isError, toast]);
@@ -60,7 +64,6 @@ function App() {
   };
 
   const totalAmount = routeList.reduce((total, zone) => total + zone.price, 0);
-
 
   return (
     <>
@@ -75,7 +78,11 @@ function App() {
       >
         <Container maxW="md">
           <Header />
-          <Search onChange={handleChange} userEntry={inputValue} />
+          <Search
+            onChange={handleChange}
+            userEntry={inputValue}
+            error={isError}
+          />
         </Container>
       </Box>
       <Container as="main" maxW="md" mt="105px" mb="100px">
