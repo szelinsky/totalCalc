@@ -121,8 +121,8 @@ export const data = [
       { zipcode: '97051', city: 'Saint Helens', dir: false },
       { zipcode: '97054', city: 'Deer Island', dir: false },
       { zipcode: '97048', city: 'Prescott', dir: false },
-      { zipcode: '98625', city: 'Kalama', dir: false },
-      { zipcode: '98626', city: 'Kelso', dir: false }
+      // { zipcode: '98625', city: 'Kalama', dir: false },
+      // { zipcode: '98626', city: 'Kelso', dir: false }
     ]
   }
 ];

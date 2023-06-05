@@ -1,3 +1,4 @@
+import { useRef } from 'react';
 import {
   Box,
   Icon,
@@ -16,7 +17,9 @@ const Search = ({ onChange, userEntry }) => (
         <Icon as={FiMapPin} fontSize="16px" />
       </InputLeftElement>
       <Input
-        type="number"
+        type="text"
+        inputMode='numeric'
+        pattern='[0-9]*'
         value={userEntry}
         onChange={onChange}
         placeholder="enter zipcode"

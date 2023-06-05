@@ -29,7 +29,7 @@ const ListRouteItem = ({ city, dir, zone, price, index, remove, _id }) => {
           <Text fontWeight="bold" color="green.500" mr={5}>
             + ${price}
           </Text>
-          <CloseButton size="sm" onClick={() => remove(_id)}/>
+          <CloseButton size="sm" onClick={() => remove(_id)} />
         </Box>
       </CardBody>
     </Card>
