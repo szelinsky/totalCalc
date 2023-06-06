@@ -25,6 +25,9 @@ const Search = ({ onChange, userEntry, error }) => (
         placeholder="enter zipcode"
         maxLength={5}
         variant="filled"
+        autoComplete='off'
+        autoCorrect='off'
+        autoCapitalize='off'
       />
       <InputRightElement>
         {error && <InfoOutlineIcon color="red.500" />}

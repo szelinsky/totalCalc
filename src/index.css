@@ -1,4 +1,8 @@
-main{
+/* main{
   -webkit-overflow-scrolling: touch;
   overflow-y: auto;
+} */
+
+footer {
+  margin-bottom: calc(20px + env(keyboard-inset-height));
 }

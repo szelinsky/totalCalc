@@ -1,18 +1,49 @@
 import { useState, useEffect } from 'react';
 import { data } from './data';
-import { Box, Container, useColorModeValue, useToast } from '@chakra-ui/react';
+import {
+  Box,
+  Container,
+  useColorModeValue,
+  useToast,
+  IconButton
+} from '@chakra-ui/react';
 import Header from './components/Header';
 import Search from './components/Search';
 import Total from './components/Total';
 import ListRoute from './components/ListRoute';
 
+import { CopyIcon } from '@chakra-ui/icons';
+
 function App() {
   const [inputValue, setInputValue] = useState('');
   const [routeList, setRouteList] = useState([]);
+  const [zoneTotals, setZoneTotals] = useState([]);
   const [isError, setIsError] = useState(false);
 
   const toast = useToast();
   const bg = useColorModeValue('gray.50', 'gray.900');
+
+  const getResults = () => {
+    const zoneTotalsData = [];
+    routeList.forEach((item) => {
+      const zoneIndex = zoneTotalsData.findIndex(
+        (zoneItem) => zoneItem.name === item.name
+      );
+
+      if (zoneIndex !== -1) {
+        zoneTotalsData[zoneIndex].orders += 1;
+        zoneTotalsData[zoneIndex].total = item.price;
+      } else {
+        zoneTotalsData.push({
+          name: item.name,
+          orders: 1,
+          total: item.price
+        });
+      }
+    });
+    setZoneTotals(zoneTotalsData);
+    // console.log(zoneTotalsData)
+  };
 
   const findLocation = (inputZipcode) => {
     const foundLocation = data
@@ -41,6 +72,13 @@ function App() {
     setRouteList([...routeList.filter((item) => item.id !== id)]);
   };
 
+  const calculationItems = zoneTotals.map((zoneItem) => (
+    <li key={zoneItem.name}>
+      {zoneItem.name} ({zoneItem.orders} orders * {zoneItem.total} =
+      {zoneItem.orders * zoneItem.total})
+    </li>
+  ));
+
   useEffect(() => {
     inputValue.length === 5 ? findLocation(inputValue) : setIsError(false);
     if (isError && inputValue.length === 5) {
@@ -55,7 +93,7 @@ function App() {
         // }
       });
     }
-  }, [inputValue, isError, toast]);
+  }, [inputValue, isError, toast, routeList]);
 
   const handleChange = (event) => {
     const { value, maxLength } = event.target;
@@ -64,6 +102,8 @@ function App() {
   };
 
   const totalAmount = routeList.reduce((total, zone) => total + zone.price, 0);
+
+  console.log(zoneTotals);
 
   return (
     <>
@@ -88,11 +128,22 @@ function App() {
       <Container as="main" maxW="md" mt="105px" mb="100px">
         <ListRoute userList={routeList} remove={removeItem} />
       </Container>
-      <Box position="fixed" bottom="0" w="100%" backgroundColor={bg}>
+      <Box position="fixed" bottom="0" w="100%" backgroundColor={bg} as="footer">
         <Container maxW="md">
           <Total ordersQuantity={routeList.length} amount={totalAmount} />
         </Container>
       </Box>
+      {/* <IconButton
+        aria-label="Search database"
+        icon={<CopyIcon />}
+        onClick={getResults}
+      />
+
+      {zoneTotals && (
+        <div>
+          <ul>{calculationItems}</ul>
+        </div>
+      )} */}
     </>
   );
 }
