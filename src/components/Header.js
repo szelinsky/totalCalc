@@ -6,10 +6,12 @@ import {
   Button,
   useColorMode,
   Icon,
+  Link
 } from '@chakra-ui/react';
-import { BiUser, BiMoon } from "react-icons/bi";
-
+import { BiCoffeeTogo, BiMoon } from 'react-icons/bi';
 import { SunIcon } from '@chakra-ui/icons';
+
+// https://www.buymeacoffee.com/seregaze
 
 function Header() {
   const { colorMode, toggleColorMode } = useColorMode();
@@ -20,11 +22,17 @@ function Header() {
           Totals Calc
         </Heading>
         <Spacer />
-        {/* <Button variant='ghost'>
-          <Icon as={BiUser} fontSize='18px' />
-        </Button> */}
+        <Link href="https://www.buymeacoffee.com/seregaze" isExternal>
+          <Button as='a' variant="ghost">
+            <Icon as={BiCoffeeTogo} fontSize="18px" />
+          </Button>
+        </Link>
         <Button onClick={toggleColorMode} variant="ghost">
-          {colorMode === 'light' ? <Icon as={BiMoon} fontSize='18px' /> : <SunIcon />}
+          {colorMode === 'light' ? (
+            <Icon as={BiMoon} fontSize="18px" />
+          ) : (
+            <SunIcon />
+          )}
         </Button>
       </Flex>
     </Box>

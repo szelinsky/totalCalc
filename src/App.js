@@ -5,14 +5,14 @@ import {
   Container,
   useColorModeValue,
   useToast,
-  IconButton
+  useDisclosure,
 } from '@chakra-ui/react';
 import Header from './components/Header';
 import Search from './components/Search';
 import Total from './components/Total';
 import ListRoute from './components/ListRoute';
-
-import { CopyIcon } from '@chakra-ui/icons';
+import Results from './components/Results';
+import ResultsModal from './components/ResultsModal';
 
 function App() {
   const [inputValue, setInputValue] = useState('');
@@ -22,28 +22,7 @@ function App() {
 
   const toast = useToast();
   const bg = useColorModeValue('gray.50', 'gray.900');
-
-  const getResults = () => {
-    const zoneTotalsData = [];
-    routeList.forEach((item) => {
-      const zoneIndex = zoneTotalsData.findIndex(
-        (zoneItem) => zoneItem.name === item.name
-      );
-
-      if (zoneIndex !== -1) {
-        zoneTotalsData[zoneIndex].orders += 1;
-        zoneTotalsData[zoneIndex].total = item.price;
-      } else {
-        zoneTotalsData.push({
-          name: item.name,
-          orders: 1,
-          total: item.price
-        });
-      }
-    });
-    setZoneTotals(zoneTotalsData);
-    // console.log(zoneTotalsData)
-  };
+  const { isOpen, onOpen, onClose } = useDisclosure();
 
   const findLocation = (inputZipcode) => {
     const foundLocation = data
@@ -72,12 +51,27 @@ function App() {
     setRouteList([...routeList.filter((item) => item.id !== id)]);
   };
 
-  const calculationItems = zoneTotals.map((zoneItem) => (
-    <li key={zoneItem.name}>
-      {zoneItem.name} ({zoneItem.orders} orders * {zoneItem.total} =
-      {zoneItem.orders * zoneItem.total})
-    </li>
-  ));
+  const getResults = () => {
+    const zoneTotalsData = [];
+    routeList.forEach((item) => {
+      const zoneIndex = zoneTotalsData.findIndex(
+        (zoneItem) => zoneItem.name === item.name
+      );
+
+      if (zoneIndex !== -1) {
+        zoneTotalsData[zoneIndex].orders += 1;
+        zoneTotalsData[zoneIndex].total = item.price;
+      } else {
+        zoneTotalsData.push({
+          name: item.name,
+          orders: 1,
+          total: item.price
+        });
+      }
+    });
+    setZoneTotals(zoneTotalsData);
+    onOpen();
+  };
 
   useEffect(() => {
     inputValue.length === 5 ? findLocation(inputValue) : setIsError(false);
@@ -103,7 +97,29 @@ function App() {
 
   const totalAmount = routeList.reduce((total, zone) => total + zone.price, 0);
 
-  console.log(zoneTotals);
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.visualViewport.offsetTop >= 0) {
+        document.querySelector(
+          'footer'
+        ).style.transform = `translateY(-${Math.max(
+          0,
+          window.innerHeight -
+            window.visualViewport.height -
+            window.visualViewport.offsetTop
+        )}px)`;
+      }
+    };
+
+    window.visualViewport.addEventListener('resize', handleResize);
+    window.visualViewport.addEventListener('scroll', handleResize);
+    handleResize(); // Initialize the keyboard height on load
+
+    return () => {
+      window.visualViewport.removeEventListener('resize', handleResize);
+      window.visualViewport.removeEventListener('scroll', handleResize);
+    };
+  }, []);
 
   return (
     <>
@@ -125,25 +141,29 @@ function App() {
           />
         </Container>
       </Box>
-      <Container as="main" maxW="md" mt="105px" mb="100px">
+      <Container as="main" maxW="md" mt="105px" mb="80px">
         <ListRoute userList={routeList} remove={removeItem} />
       </Container>
-      <Box position="fixed" bottom="0" w="100%" backgroundColor={bg} as="footer">
+      <Box
+        position="fixed"
+        bottom="0"
+        w="100%"
+        height="64px"
+        backgroundColor={bg}
+        as="footer"
+      >
         <Container maxW="md">
-          <Total ordersQuantity={routeList.length} amount={totalAmount} />
+          <Total
+            ordersQuantity={routeList.length}
+            amount={totalAmount}
+            getResults={getResults}
+            totals={zoneTotals}
+          />
         </Container>
       </Box>
-      {/* <IconButton
-        aria-label="Search database"
-        icon={<CopyIcon />}
-        onClick={getResults}
-      />
-
-      {zoneTotals && (
-        <div>
-          <ul>{calculationItems}</ul>
-        </div>
-      )} */}
+      <ResultsModal isOpen={isOpen} onClose={onClose}>
+        <Results zoneTotals={zoneTotals}/>
+      </ResultsModal>
     </>
   );
 }

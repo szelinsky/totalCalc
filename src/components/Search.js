@@ -6,7 +6,7 @@ import {
   InputLeftElement,
   InputRightElement
 } from '@chakra-ui/react';
-import { FiMapPin, FiX } from 'react-icons/fi';
+import { FiMapPin } from 'react-icons/fi';
 import { InfoOutlineIcon } from '@chakra-ui/icons';
 
 const Search = ({ onChange, userEntry, error }) => (
@@ -25,7 +25,7 @@ const Search = ({ onChange, userEntry, error }) => (
         placeholder="enter zipcode"
         maxLength={5}
         variant="filled"
-        autoComplete='off'
+        autoComplete="off"
         autoCorrect='off'
         autoCapitalize='off'
       />
